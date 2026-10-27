@@ -4,7 +4,7 @@
 
 **사용자 요청에 따라 AI는 Gemini 3.8 Flash(`gemini-3.8-flash`)로 구현했다.** 과제 원문의 OpenAI/GPT API 사용 조건과 다른 부분이다. 보너스 과제는 구현 범위에서 제외했다.
 
-현재 상태는 **로컬 구현·테스트와 실제 Gemini 응답 검증 완료, Firestore 연결 및 외부 배포 진행 중**이다. 아래 스크린샷은 로컬 데모를 실행해 촬영한 화면으로, 실제 Gemini 답변이나 배포 완료 증거가 아니다.
+현재 상태는 **로컬 테스트 30개 통과, 실제 Firestore 731개 적재·Gemini 응답·Render API 검증 완료, Vercel 프론트엔드 배포 진행 중**이다. 아래 스크린샷은 로컬 데모를 실행해 촬영한 화면으로, 실제 Gemini 답변이나 배포 완료 증거가 아니다.
 
 ## 1. 서비스 소개와 필수 기능
 
@@ -220,11 +220,11 @@ AI 실패 시 불완전한 대화를 새로 저장하지 않고, 화면 입력�
 
 | 대상 | URL | 현재 상태 |
 | --- | --- | --- |
-| Vercel 프론트엔드 | 미발급 | 계정 설정 및 배포 필요 |
-| Render 백엔드 API | 미발급 | 계정·키 설정 및 배포 필요 |
-| Render Swagger | 백엔드 배포 URL 뒤 `/docs` | 배포 후 확인 필요 |
+| Vercel 프론트엔드 | [bikewise-m1-2.vercel.app](https://bikewise-m1-2.vercel.app) | 프로젝트 생성 완료, 첫 배포 진행 중 |
+| Render 백엔드 API | [bikewise-m1-2-api.onrender.com](https://bikewise-m1-2-api.onrender.com) | `/health`, `/api/data/summary` 정상 응답 |
+| Render Swagger | [API 문서 열기](https://bikewise-m1-2-api.onrender.com/docs) | 접속 확인 완료 |
 
-실제로 발급받은 주소를 배포 후 위 표에 기록한다. 예시 도메인을 배포 완료 주소로 표시하지 않는다.
+위 주소는 실제 생성한 프로젝트 주소다. 백엔드는 Singapore 리전의 무료 Web Service, Firestore는 `bikewise-m1-2` 프로젝트의 Singapore Standard 기본 데이터베이스를 사용한다. Firestore에는 원본 731개를 적재했으며 총 대여량 3,292,679건·일평균 4,504.35건을 배포 API에서 확인했다.
 
 ### Render
 
