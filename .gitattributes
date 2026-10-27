@@ -1,0 +1,2 @@
+# Preserve the published source bytes and their recorded SHA-256 checksums.
+data/raw/* -text -whitespace
