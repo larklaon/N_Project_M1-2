@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="공유자전거 데이터를 이해하는 AI 분석 비서. 기록을 관리하고, 수치에 근거한 답변을 확인하세요."
+    />
+    <meta name="theme-color" content="#214b3e" />
+    <title>Bikewise — 데이터를 이해하는 대화</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="config.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">본문으로 이동</a>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#chat" aria-label="Bikewise 홈">
+          <svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <circle cx="10" cy="24" r="7" />
+            <circle cx="27" cy="24" r="7" />
+            <path d="m10 24 7-15 10 15H10l-5-12M14 9h7m1-5h5l3 7" />
+          </svg>
+          <span>Bikewise<span class="brand-dot">.</span></span>
+        </a>
+        <p class="brand-description">내 데이터를 이해하는 AI 비서</p>
+        <button class="button primary new-chat" id="new-chat">
+          <span aria-hidden="true">＋</span> 새 대화 시작
+        </button>
+        <nav aria-label="주요 메뉴">
+          <a class="nav-link active" href="#chat" data-view="chat"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-2 2V11.5a9.5 9.5 0 0 1 19 0Z"
+              />
+              <path d="M7 10h10M7 14h6" /></svg
+            >AI 대화</a
+          >
+          <a class="nav-link" href="#data" data-view="data"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M3 10h18M9 10v10" /></svg
+            >데이터 관리</a
+          >
+          <a class="nav-link" href="#history" data-view="history"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 11a9 9 0 1 1 2 7M3 4v7h7m2-5v6l4 2" /></svg
+            >대화 기록</a
+          >
+        </nav>
+        <div class="sidebar-note">
+          <span class="status-dot" aria-hidden="true"></span
+          ><span
+            >Capital Bikeshare<span class="sidebar-sub"
+              >공유자전거 일별 대여 기록</span
+            ></span
+          >
+        </div>
+        <div class="sidebar-bottom">
+          <a
+            id="docs-link"
+            href="http://127.0.0.1:8000/docs"
+            target="_blank"
+            rel="noopener"
+            >API 문서 <span aria-hidden="true">↗</span></a
+          ><span>데이터에 근거한 작은 발견</span>
+        </div>
+      </aside>
+
+      <main id="main" tabindex="-1">
+        <header class="page-header">
+          <div>
+            <h1 id="page-title">데이터에서 시작하는 대화</h1>
+            <p id="page-description">
+              기록 속 궁금한 점을 물어보세요. 숫자를 함께 읽어드릴게요.
+            </p>
+          </div>
+          <button
+            class="connection"
+            id="connection"
+            title="서버 연결 다시 확인"
+          >
+            <span class="status-dot" aria-hidden="true"></span
+            ><span id="connection-text">연결 확인 중</span>
+          </button>
+        </header>
+        <div class="notice" id="mode-notice" role="status" hidden></div>
+        <div
+          class="notice error-notice"
+          id="connection-notice"
+          role="alert"
+          hidden
+        ></div>
+        <div class="workspace">
+          <div class="view-container">
+            <section
+              id="view-chat"
+              class="view chat-panel"
+              aria-label="AI와 대화"
+            >
+              <div class="panel-top">
+                <div>
+                  <span class="small-dot" aria-hidden="true"></span>분석 비서
+                </div>
+                <span id="save-status">답변 후 자동 저장</span>
+              </div>
+              <div class="chat-scroll" id="chat-scroll">
+                <div class="welcome" id="welcome">
+                  <div class="welcome-mark" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <path d="M12 32V23m12 9V12m12 20V19" />
+                      <path d="m9 16 13-9 14 4" />
+                    </svg>
+                  </div>
+                  <h2>기록은 숫자로,<br />이해는 대화로.</h2>
+                  <p>
+                    매일의 자전거 대여 기록에서<br />흐름을 발견하고, 궁금증을
+                    풀어보세요.
+                  </p>
+                  <div class="suggestions">
+                    <button data-question="전체 대여 기록을 요약해 줘">
+                      전체 기록을 한눈에 알고 싶어요
+                      <span aria-hidden="true">↗</span></button
+                    ><button data-question="대여량이 가장 많았던 날은 언제야?">
+                      가장 많이 빌린 날은 언제인가요?
+                      <span aria-hidden="true">↗</span></button
+                    ><button data-question="최근 저장된 데이터의 추세는 어때?">
+                      최근 기록의 흐름은 어떤가요?
+                      <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="messages"
+                  role="log"
+                  aria-label="대화 메시지"
+                  aria-live="polite"
+                  aria-relevant="additions"
+                ></div>
+                <div
+                  id="chat-loading"
+                  class="chat-loading"
+                  role="status"
+                  hidden
+                >
+                  <span class="spinner" aria-hidden="true"></span>데이터를 읽고
+                  답변을 준비하고 있어요…
+                </div>
+              </div>
+              <div class="composer-wrap">
+                <form id="chat-form">
+                  <label class="sr-only" for="question"
+                    >데이터에 관해 질문하기</label
+                  ><textarea
+                    id="question"
+                    rows="2"
+                    maxlength="2000"
+                    placeholder="데이터에 관해 궁금한 점을 물어보세요"
+                    required
+                  ></textarea
+                  ><button
+                    class="send-button"
+                    id="send"
+                    type="submit"
+                    aria-label="질문 보내기"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 19V5m-6 6 6-6 6 6" />
+                    </svg>
+                  </button>
+                </form>
+                <div class="composer-hint">
+                  <span>Enter로 전송 · Shift + Enter로 줄바꿈</span
+                  ><span>AI 답변의 수치와 기간을 확인하세요.</span>
+                </div>
+                <p id="chat-error" class="form-error" role="alert" hidden></p>
+              </div>
+            </section>
+
+            <section
+              id="view-data"
+              class="view"
+              aria-labelledby="data-heading"
+              hidden
+            >
+              <div class="section-heading">
+                <div>
+                  <h2 id="data-heading">하루의 기록</h2>
+                  <p>날짜별 대여 건수와 메모를 관리하세요.</p>
+                </div>
+                <span id="data-count" class="count-label">불러오는 중</span>
+              </div>
+              <form id="data-form" class="data-form">
+                <h3 id="data-form-title">새 기록 추가</h3>
+                <div class="form-grid">
+                  <label
+                    >날짜<input type="date" id="data-date" required /></label
+                  ><label
+                    >총 대여 건수<input
+                      type="number"
+                      id="data-value"
+                      min="0"
+                      max="10000000"
+                      step="1"
+                      required
+                      placeholder="예: 4500" /></label
+                  ><label class="memo-field"
+                    >메모 <span class="optional">선택</span
+                    ><input
+                      id="data-memo"
+                      maxlength="500"
+                      placeholder="이날의 기록을 남겨보세요"
+                  /></label>
+                </div>
+                <div class="form-footer">
+                  <p>
+                    한 날짜에 하나의 기록을 저장합니다. 요약에 바로 반영됩니다.
+                  </p>
+                  <div>
+                    <button
+                      class="button secondary"
+                      id="cancel-edit"
+                      type="button"
+                      hidden
+                    >
+                      수정 취소</button
+                    ><button
+                      class="button primary"
+                      id="save-data"
+                      type="submit"
+                    >
+                      기록 추가
+                    </button>
+                  </div>
+                </div>
+                <p id="data-error" class="form-error" role="alert" hidden></p>
+              </form>
+              <div class="table-toolbar">
+                <h3>저장된 기록</h3>
+                <button class="text-button" id="refresh-data">
+                  새로고침 <span aria-hidden="true">↻</span>
+                </button>
+              </div>
+              <div
+                class="table-wrap"
+                tabindex="0"
+                aria-label="대여 기록 표. 좁은 화면에서는 가로로 스크롤하세요."
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">날짜</th>
+                      <th scope="col" class="number-cell">대여 건수</th>
+                      <th scope="col">메모</th>
+                      <th scope="col"><span class="sr-only">작업</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="data-rows"></tbody>
+                </table>
+              </div>
+              <p id="data-empty" class="empty-message" hidden>
+                아직 기록이 없습니다. 첫 기록을 추가해 보세요.
+              </p>
+              <div class="pagination">
+                <span id="page-label"></span>
+                <div>
+                  <button class="button secondary" id="prev-page">이전</button
+                  ><button class="button secondary" id="next-page">다음</button>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="view-history"
+              class="view"
+              aria-labelledby="history-heading"
+              hidden
+            >
+              <div class="section-heading">
+                <div>
+                  <h2 id="history-heading">이어지는 발견</h2>
+                  <p>저장한 대화를 불러와 이야기를 이어가세요.</p>
+                </div>
+                <button class="text-button" id="refresh-history">
+                  새로고침 <span aria-hidden="true">↻</span>
+                </button>
+              </div>
+              <p class="history-note">
+                이 브라우저에서 저장한 대화가 표시됩니다. 답변을 받으면 자동
+                저장됩니다.
+              </p>
+              <div id="history-list" class="history-list"></div>
+              <p id="history-empty" class="empty-message" hidden>
+                아직 저장한 대화가 없습니다. AI와 첫 대화를 나눠보세요.
+              </p>
+              <p id="history-error" class="form-error" role="alert" hidden></p>
+              <div id="history-preview" class="history-preview" hidden>
+                <div class="preview-top">
+                  <h3 id="preview-title"></h3>
+                  <button class="button primary" id="continue-chat">
+                    대화 이어가기 <span aria-hidden="true">↗</span>
+                  </button>
+                </div>
+                <div id="preview-messages"></div>
+                <p class="history-note">
+                  불러온 답변은 당시 데이터 기준입니다. 새 질문에는 현재 요약이
+                  반영됩니다.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <aside class="summary-panel" aria-labelledby="summary-heading">
+            <div class="summary-title">
+              <h2 id="summary-heading">지금의 데이터</h2>
+              <button
+                class="icon-button"
+                id="refresh-summary"
+                aria-label="데이터 요약 새로고침"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 7a9 9 0 1 0 1 8M20 3v5h-5" />
+                </svg>
+              </button>
+            </div>
+            <p class="summary-subtitle">AI 답변이 시작되는 근거</p>
+            <div id="summary-loading" class="summary-loading" role="status">
+              요약을 불러오고 있어요…
+            </div>
+            <div id="summary-content" hidden>
+              <div class="dataset-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="6" cy="16" r="4" />
+                  <circle cx="18" cy="16" r="4" />
+                  <path d="m6 16 5-9 7 9H6L3 8m6-1h5m1-4h3l2 5" /></svg
+                ><span>공유자전거 대여 기록</span>
+              </div>
+              <div class="period-block">
+                <span>데이터 기간</span><strong id="summary-period"></strong
+                ><span id="summary-count"></span>
+              </div>
+              <dl class="metrics">
+                <div>
+                  <dt>누적 대여량</dt>
+                  <dd id="metric-total"></dd>
+                </div>
+                <div>
+                  <dt>일평균</dt>
+                  <dd id="metric-average"></dd>
+                </div>
+                <div>
+                  <dt>가장 많은 날</dt>
+                  <dd>
+                    <span id="metric-max"></span
+                    ><small id="metric-max-date"></small>
+                  </dd>
+                </div>
+                <div>
+                  <dt>가장 적은 날</dt>
+                  <dd>
+                    <span id="metric-min"></span
+                    ><small id="metric-min-date"></small>
+                  </dd>
+                </div>
+              </dl>
+              <div class="trend-block">
+                <h3>최근 기록의 흐름</h3>
+                <strong id="summary-trend"></strong>
+                <p id="trend-detail"></p>
+              </div>
+              <p class="source-note">
+                원자료: UCI Bike Sharing<br />미국 워싱턴 D.C. · 사용자가 수정한
+                기록 포함<br />‘최근’은 저장된 마지막 날짜 기준입니다.
+              </p>
+            </div>
+            <p id="summary-error" class="form-error" role="alert" hidden></p>
+            <a class="summary-manage" href="#data"
+              >데이터 관리하기 <span aria-hidden="true">↗</span></a
+            >
+          </aside>
+        </div>
+        <footer class="page-footer">
+          <span>Bikewise · N Project M1-2</span
+          ><span>작은 기록이, 더 나은 이해로.</span>
+        </footer>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>

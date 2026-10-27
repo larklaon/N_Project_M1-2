@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: bikewise-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.7
+      - key: DEMO_MODE
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: MAX_OUTPUT_TOKENS
+        value: "800"
+      - key: CHAT_REQUESTS_PER_MINUTE
+        value: "5"
+      - key: CHAT_REQUESTS_PER_DAY
+        value: "100"
